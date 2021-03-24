@@ -18,17 +18,21 @@ export function activate(context: vscode.ExtensionContext) {
         {
             provideHover(document, position, token) {
 
-            const regexp = /[^ ]+/g;
-            const range = document.getWordRangeAtPosition(position, regexp);
+            const range = document.getWordRangeAtPosition(position);
             const word = document.getText(range);
+
+            const regexp = /[^ ]+/g;
+            const rangeGreedy = document.getWordRangeAtPosition(position, regexp);
+            const wordGreedy = document.getText(rangeGreedy);
 
             if (word.length > 1) {
                 const cxxfilt: string = getCxxFilt(word);
+                const cxxfiltGreedy: string = getCxxFilt(wordGreedy);
 
-                if (cxxfilt.length > 0) {
+                if (cxxfilt.length > 0 || cxxfiltGreedy.length > 0) {
                     return new vscode.Hover({
                         language: "*",
-                        value: `c++filt: ${cxxfilt}`
+                        value: `c++filt: ${cxxfilt}\nc++filt: ${cxxfiltGreedy}`
                     });
                 }
 
